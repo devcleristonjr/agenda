@@ -264,6 +264,8 @@
 .executive #list .column-status,.executive #list .column-actions{display:none}
 @media(max-width:1100px){#list{--commit-columns:84px minmax(0,1.5fr) minmax(85px,1fr) 140px 184px}#list .row,#list .commit-columns{gap:10px;padding-left:12px;padding-right:12px}}
 @media(max-width:760px){#list .commit-columns{display:none}#list .row,.executive #list .row{grid-template-columns:76px minmax(0,1fr);gap:8px 12px}#list .row .place{grid-column:2}#list .row .state{grid-column:2;flex-direction:row;flex-wrap:wrap;justify-content:flex-start}#list .row .acts{grid-column:2;grid-template-columns:minmax(0,170px) 36px;justify-content:start}}
+
+.navigation-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px;margin-bottom:14px}.navigation-bar #views,.navigation-bar #date-controls{margin:0}.week-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;width:100%;border-top:1px solid var(--line);padding-top:12px}.week-strip button{border:1px solid var(--line);background:#f8fafc;border-radius:8px;padding:8px 3px;color:#334155;display:grid;gap:3px;justify-items:center}.week-strip button[aria-current=date]{background:#970808;color:white;border-color:#970808}.week-strip b{font-size:19px}.week-strip small,.week-strip span{font-size:11px}.week-strip[hidden]{display:none}.quick-menu{position:fixed;z-index:100;width:210px;background:white;border:1px solid #dbe2ea;border-radius:9px;box-shadow:0 10px 35px #0f172a26;padding:5px}.quick-menu button{display:block;width:100%;border:0;background:white;text-align:left;padding:10px;border-radius:5px;color:#334155;font:inherit;font-size:13px}.quick-menu button:hover,.quick-menu button:focus-visible{background:#f1f5f9}.quick-menu .quick-danger{color:#b91c1c;border-top:1px solid #e2e8f0}.attendance-history{border-top:1px solid #e2e8f0;padding:16px 0 22px}.attendance-history h3{font-size:14px;margin:0 0 12px}.history-stage{display:grid;grid-template-columns:12px 1fr auto;gap:10px;align-items:center;padding:8px 0;font-size:13px}.history-stage b{font-weight:500;color:#64748b}.history-dot{width:9px;height:9px;border:2px solid #cbd5e1;border-radius:50%}.history-dot.complete{background:#15803d;border-color:#15803d}.history-metrics{display:flex;gap:24px;flex-wrap:wrap;background:#f8fafc;border-radius:8px;padding:12px;margin-top:10px;font-size:12px;color:#64748b}.history-metrics b{display:block;font-size:18px;color:#334155}.agenda-alert{padding:9px 14px;color:#92400e;font-size:13px;border-bottom:1px solid #fef3c7}#agenda-alerts{background:#fffbeb;margin-bottom:14px}.gov .head{background:#970808;color:white}.gov .govgrid{display:block;padding:0}.gov-record{display:grid;grid-template-columns:100px minmax(0,1fr) 120px 36px;gap:12px;align-items:center;padding:14px 16px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:white;width:100%;text-align:left}.gov-name{background:none;border:0;color:#334155;text-align:left;font:inherit;font-weight:650;overflow-wrap:anywhere}.gov-status{justify-self:start;border-radius:20px;padding:5px 10px;background:#fef3c7;color:#92400e;font-size:12px}.gov-status[data-confirmation=Confirmado]{background:#dcfce7;color:#166534}.gov-status[data-confirmation=Cancelado]{background:#fee2e2;color:#991b1b}.summary-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.summary-head select{padding:8px;border:1px solid var(--line);border-radius:6px;background:white}.btn{transition:background-color .16s,border-color .16s}.btn:focus-visible,button:focus-visible{outline:2px solid #970808;outline-offset:2px}#choose::backdrop,#dialog::backdrop{background:#0f172a55;backdrop-filter:blur(5px)}#choose,#dialog{border-radius:14px;max-height:calc(100dvh - 32px)}.executive .gov-record{grid-template-columns:100px minmax(0,1fr) 120px}@media(max-width:600px){.week-strip{gap:3px}.week-strip button{padding:7px 1px}.week-strip span{font-size:10px}.gov-record,.executive .gov-record{grid-template-columns:65px minmax(0,1fr)}.gov-status{grid-column:2}.gov-record .btn{grid-column:2;justify-self:end}}@media print{#navigation,#agenda-alerts,#quick-menu{display:none!important}}@media(prefers-reduced-motion:reduce){.btn{transition:none}}
 </style>
   </head>
   <body>
@@ -280,7 +282,7 @@
           <div>
             <h1>Agenda do Secretário</h1>
             <p id="subtitle">Controle de compromissos, visitantes e atendimento no prédio</p>
-            <div class="date-nav">
+            <div class="date-nav" id="date-controls">
               <button class="btn light sm" id="prev" aria-label="Dia anterior">‹</button>
               <input type="date" id="date" aria-label="Data da agenda" />
               <button class="btn light sm" id="next" aria-label="Próximo dia">›</button>
@@ -290,8 +292,8 @@
           <div><button class="btn light" id="mode" aria-pressed="false">Modo secretário</button> <button class="btn light" id="print">Imprimir</button> <button class="btn primary operational" id="new">+ Novo registro</button></div>
         </div>
 
-        <div id="views" class="date-nav" role="group" aria-label="Visualização"><button class="btn light" data-view="day">Dia</button><button class="btn light" data-view="week">Semana</button><button class="btn light" data-view="month">Mês</button></div>
-        <section class="card" id="calendar" hidden></section>
+        <div class="card navigation-bar" id="navigation"><div id="views" class="date-nav" role="group" aria-label="Visualização"><button class="btn light" data-view="day">Dia</button><button class="btn light" data-view="week">Semana</button><button class="btn light" data-view="month">Mês</button></div>
+        <div id="week-strip" class="week-strip"></div></div><section class="card" id="calendar" hidden></section><section id="agenda-alerts" class="card operational" hidden></section>
         <section id="live" class="live-grid" aria-label="Acompanhamento de hoje" hidden></section><section class="stats operational" aria-label="Resumo do dia">
           <button type="button" class="card stat" data-status="all" style="--c: var(--wine)"><span>Compromissos</span><strong id="st-total">0</strong></button>
           <button type="button" class="card stat" data-status="Aguardando" style="--c: var(--wait)"><span>Aguardando</span><strong id="st-wait">0</strong></button>
@@ -320,7 +322,7 @@
         </section>
 
         <section class="card wa" id="wa" hidden>
-          <b>Resumo para WhatsApp</b>
+          <div class="summary-head"><b>Resumo para WhatsApp</b><select id="summary-mode" aria-label="Formato do resumo"><option value="full">Completo</option><option value="short">Resumido</option><option value="confirmed">Sem cancelados / GOV confirmado</option></select></div>
           <pre id="watext"></pre>
           <button class="btn primary" id="copy">Copiar texto</button>
         </section>
@@ -349,7 +351,7 @@
       </form>
     </dialog>
 
-    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <div id="quick-menu" class="quick-menu" hidden role="group" aria-label="Ações do registro"></div><div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
     <script>
       "use strict";
@@ -486,7 +488,7 @@
 
       function rowTemplate(m, { conflict, current }) {
         const birthday = isBirthday(m);
-        if (birthday) return `<article class="birthday-row"><span class="birthday-icon" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13h16v8H4zM3 21h18M4 16c2 2 4 2 6 0 2 2 4 2 6 0 2 2 3 2 4 0M8 13V9m4 4V9m4 4V9M8 6v1m4-3v3m4-1v1"/></svg></span><div class="birthday-info"><button class="birthday-name" data-action="details" data-id="${escapeHtml(m.id)}">${escapeHtml(m.name)}</button><div class="sub">${escapeHtml(["Aniversário",m.role,m.org].filter(Boolean).join(" · "))}</div></div><button class="btn light sm operational" data-action="details" data-id="${escapeHtml(m.id)}" aria-label="Detalhes de ${escapeHtml(m.name)}">•••</button></article>`;
+        if (birthday) return `<article class="birthday-row"><span class="birthday-icon" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13h16v8H4zM3 21h18M4 16c2 2 4 2 6 0 2 2 4 2 6 0 2 2 3 2 4 0M8 13V9m4 4V9m4 4V9M8 6v1m4-3v3m4-1v1"/></svg></span><div class="birthday-info"><button class="birthday-name" data-action="details" data-id="${escapeHtml(m.id)}">${escapeHtml(m.name)}</button><div class="sub">${escapeHtml(["Aniversário",m.role,m.org].filter(Boolean).join(" · "))}</div></div><button class="btn light sm operational" data-action="menu" data-id="${escapeHtml(m.id)}" aria-label="Ações de ${escapeHtml(m.name)}">•••</button></article>`;
         const cls = isHearing(m) ? (STATUS_CLASS[m.status] || "") : "";
         const type = typeOf(m);
         const next = isHearing(m) ? NEXT_STEP[m.status] : null;
@@ -506,7 +508,7 @@
             </div>
             <div class="acts">
               ${next ? `<button class="btn primary sm" data-action="advance" data-id="${m.id}">${next.label}</button>` : ""}
-              <button class="btn light sm" data-action="details" data-id="${m.id}" aria-label="Detalhes de ${escapeHtml(m.name)}">•••</button>
+              <button class="btn light sm" data-action="menu" data-id="${m.id}" aria-label="Ações de ${escapeHtml(m.name)}">•••</button>
             </div>
           </article>`;
       }
@@ -533,7 +535,7 @@
 
       function renderGov(gov) {
         $("#gov").innerHTML = gov.length
-          ? gov.map((g) => `<button class="govitem" data-action="details" data-id="${g.id}"><b class="time-num">${formatTime(g.start)}</b>${escapeHtml(g.name)}<small style="display:block">${escapeHtml(g.confirmation || "Pendente")}</small></button>`).join("")
+          ? gov.map((g) => `<article class="govitem gov-record"><b class="time-num">${formatTime(g.start)}</b><button class="gov-name" data-action="details" data-id="${escapeHtml(g.id)}">${escapeHtml(g.name)}</button><span class="gov-status" data-confirmation="${escapeHtml(g.confirmation||"Pendente")}">${escapeHtml(g.confirmation||"Pendente")}</span><button class="btn light sm operational" data-action="menu" data-id="${escapeHtml(g.id)}" aria-label="Ações de ${escapeHtml(g.name)}">•••</button></article>`).join("")
           : '<p class="govempty">Nenhuma reserva para este dia.</p>';
       }
 
@@ -560,7 +562,10 @@
         const meetings = dayItems("meeting");
         const gov = dayItems("gov");
         renderHeader();
+        closeQuickMenu();
         renderCalendar();
+        renderWeekStrip();
+        renderAlerts(meetings);
         renderLive();
         document.querySelectorAll("[data-status]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.status===state.status)));
         renderStats(meetings, gov);
@@ -700,8 +705,18 @@
         if (button.dataset.action === "advance") advanceStatus(item.id);
         if (button.dataset.action === "edit") openForm(item.kind, item);
         if (button.dataset.action === "details") showDetails(item);
+        if (button.dataset.action === "menu") openQuickMenu(button,item);
       }
 
+      function minutes(t){if(!t)return null;const [h,m]=t.split(":").map(Number);return h*60+m;}
+      function duration(a,b){return a&&b?Math.max(0,minutes(b)-minutes(a)):null;}
+      function timeline(i){if(!isHearing(i)||state.executive)return "";const stages=[["Chegada registrada",i.arrivedAt],["Atendimento iniciado",i.startedAt],["Atendimento finalizado",i.finishedAt]];const wait=duration(i.arrivedAt,i.startedAt), service=duration(i.startedAt,i.finishedAt);return '<section class="attendance-history"><h3>Histórico do atendimento</h3>'+stages.map(([label,time])=>'<div class="history-stage"><span class="history-dot '+(time?"complete":"")+'"></span><span>'+label+'</span><b>'+escapeHtml(time||"Não registrado")+'</b></div>').join("")+((wait!==null||service!==null)?'<div class="history-metrics">'+(wait!==null?'<span>Tempo de espera <b>'+wait+' min</b></span>':'')+(service!==null?'<span>Duração <b>'+service+' min</b></span>':'')+'</div>':'')+'</section>';}
+      function renderWeekStrip(){const panel=$("#week-strip");panel.hidden=state.view!=="day";if(panel.hidden)return;const first=shiftDate(state.date,-((parseISODate(state.date).getDay()+6)%7));panel.innerHTML=Array.from({length:7},(_,j)=>{const date=shiftDate(first,j),n=state.items.filter(i=>occurs(i,date)&&active(i)&&i.confirmation!=="Cancelado").length;return '<button data-week-date="'+date+'" aria-current="'+(date===state.date?"date":"false")+'"><small>'+["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"][j]+'</small><b>'+date.slice(-2)+'</b><span>'+n+' reg.</span></button>';}).join("");}
+      function renderAlerts(meetings){const panel=$("#agenda-alerts"),today=state.date===toISODate(new Date()),items=meetings.filter(i=>active(i)&&!isBirthday(i)),messages=[];if(today)items.filter(i=>isHearing(i)&&["Previsto","Aguardando"].includes(i.status)&&i.start<nowHHMM()).forEach(i=>messages.push("Atraso de "+duration(i.start,nowHHMM())+" min · "+i.name));const conflicts=findConflicts(items);if(conflicts.size)messages.push("Conflito de horário · "+conflicts.size+" registros");for(let j=1;j<items.length;j++){const a=items[j-1],b=items[j],gap=duration(a.end,b.start);if(a.end&&b.start>=a.end&&gap<30&&a.place&&b.place&&a.place!==b.place&&(typeOf(a)==="Evento"||typeOf(b)==="Evento"))messages.push("Verificar deslocamento · "+gap+" min entre "+a.name+" e "+b.name);}panel.hidden=!messages.length||state.executive;panel.innerHTML=messages.map(m=>'<div class="agenda-alert">⚠ '+escapeHtml(m)+'</div>').join("");}
+      let quickItem=null,quickAnchor=null;
+      function closeQuickMenu(){ $("#quick-menu").hidden=true;quickAnchor?.setAttribute("aria-expanded","false");quickItem=null; }
+      function openQuickMenu(button,item){if(state.executive){showDetails(item);return;}if(quickItem===item.id&&!$("#quick-menu").hidden){closeQuickMenu();return;}closeQuickMenu();quickItem=item.id;quickAnchor=button;const p=$("#quick-menu");p.innerHTML=[["details","Ver detalhes"],["edit","Editar registro"],["reschedule","Reagendar"],["duplicate","Duplicar"],...((isHearing(item)||item.kind==="gov")&&item.status!=="Cancelado"&&item.confirmation!=="Cancelado"?[["cancel","Cancelar compromisso"]]:[]),["delete","Excluir registro"]].map(([a,t])=>'<button data-quick="'+a+'" class="'+(a==="delete"?"quick-danger":"")+'">'+t+'</button>').join("");p.hidden=false;button.setAttribute("aria-expanded","true");const r=button.getBoundingClientRect(),h=p.offsetHeight;p.style.left=Math.max(8,Math.min(innerWidth-p.offsetWidth-8,r.right-p.offsetWidth))+"px";p.style.top=Math.max(8,r.bottom+h+8>innerHeight?r.top-h-5:r.bottom+5)+"px";p.querySelector("button").focus();}
+      function duplicateItem(i){openForm(i.kind,{...i,id:"",date:state.date,status:"Previsto",confirmation:"Pendente",arrivedAt:"",startedAt:"",finishedAt:""});$("#delete").hidden=true;$("#dialog-title").textContent="Duplicar registro";}
       function elapsed(t){if(!t)return 0;const [h,m]=t.split(":").map(Number),n=new Date();return Math.max(0,n.getHours()*60+n.getMinutes()-h*60-m);}
       function renderLive(){
         const panel=$("#live");panel.hidden=state.date!==toISODate(new Date())||state.executive||state.view!=="day";if(panel.hidden)return;
@@ -713,7 +728,7 @@
       function showDetails(i){
         detailId=i.id;const panel=$("#details"),step=isHearing(i)&&NEXT_STEP[i.status];
         const fields=[["Tipo",i.kind==="gov"?"Reserva GOV":typeOf(i)],["Data",formatShortDate(state.date)],["Horário",isBirthday(i)?"Dia todo":formatRange(i)],["Cargo",i.role],["Instituição",i.org],["Local",i.place],["Endereço",i.address],["Pauta",i.topic],["Status",i.kind==="gov"?i.confirmation:isHearing(i)?(i.status==="No prédio"?"Em atendimento":i.status):""],...(!state.executive?[["Observações internas",i.notes],["Chegada",i.arrivedAt],["Início real",i.startedAt],["Término real",i.finishedAt]]:[])];
-        $("#detail-body").innerHTML='<h2>'+escapeHtml(i.name)+'</h2><dl>'+fields.filter(x=>x[1]).map(x=>'<div class="detail-field'+(["Pauta","Observações internas","Endereço"].includes(x[0])?' detail-wide':'')+'"><dt>'+x[0]+'</dt><dd>'+escapeHtml(x[1])+'</dd></div>').join("")+'</dl>'+(!state.executive?'<div class="detail-actions">'+(step?'<button class="btn primary" data-detail="advance">'+step.label+'</button>':'')+'<button class="btn light" data-detail="edit">Editar</button><button class="btn light" data-detail="duplicate">Duplicar</button></div>':'');
+        $("#detail-body").innerHTML='<h2>'+escapeHtml(i.name)+'</h2><dl>'+fields.filter(x=>x[1]).map(x=>'<div class="detail-field'+(["Pauta","Observações internas","Endereço"].includes(x[0])?' detail-wide':'')+'"><dt>'+x[0]+'</dt><dd>'+escapeHtml(x[1])+'</dd></div>').join("")+'</dl>'+timeline(i)+(!state.executive?'<div class="detail-actions">'+(step?'<button class="btn primary" data-detail="advance">'+step.label+'</button>':'')+'<button class="btn light" data-detail="edit">Editar</button><button class="btn light" data-detail="duplicate">Duplicar</button></div>':'');
         if(!panel.open)panel.showModal();
       }
       function closeForm(){if(JSON.stringify([...new FormData(form)])!==formSnapshot&&!confirm("Descartar alterações não salvas?"))return;dialog.close();}
@@ -724,31 +739,14 @@
       }
 
       /* ===== Resumo para WhatsApp ===== */
-      function buildSummary() {
-        const meetings = dayItems("meeting");
-        const gov = dayItems("gov");
-        const places = [...new Set(meetings.filter((m) => !isBirthday(m)).map((m) => m.place).filter(Boolean))];
-        const singlePlace = places.length === 1;
-
-        const lines = [`*Agenda Sec. ${SECRETARY} - ${formatShortDate(state.date)} (${formatWeekday(state.date)})*`];
-        if (singlePlace) lines.push(`📍 *Local:* ${places[0]}`);
-
-        const blocks = meetings.map((m) => {
-          const detail = [m.role, m.org].filter(Boolean).join(" - ");
-          if (isBirthday(m)) return `🎂 *Aniversário:* ${m.name}${detail ? ` | ${detail}` : ""}`;
-          if (!active(m)) return `*${m.status}:* ${m.name}`;
-          return [
-            `🕞 *Horário ${formatRange(m)}*`,
-            `🔹 *${typeOf(m)==="Evento"?"Evento":"Participante"}:* ${m.name}${detail ? ` | ${detail}` : ""}`,
-            ...(singlePlace || !m.place ? [] : [`📍 *Local:* ${m.place}`]),
-          ].join("\n");
-        });
-        lines.push("", blocks.length ? blocks.join("\n\n") : "Nenhum compromisso registrado.");
-
-        if (gov.length) {
-          lines.push("", "‼️ *RESERVAS DE AGENDA COM O GOVERNADOR* ‼️");
-          gov.forEach((g) => lines.push(`*${formatTime(g.start)} | ${g.name.toLocaleUpperCase("pt-BR")}* (${g.confirmation || "Pendente"})`));
-        }
+      function buildSummary(){
+        const mode=$("#summary-mode").value,meetings=dayItems("meeting").filter(i=>mode!=="confirmed"||active(i)),gov=dayItems("gov").filter(i=>mode!=="confirmed"||i.confirmation==="Confirmado");
+        const lines=["*AGENDA DO SECRETÁRIO* "+SECRETARY,formatWeekday(state.date)+" | "+formatShortDate(state.date)];
+        const birthdays=meetings.filter(isBirthday),timed=meetings.filter(i=>!isBirthday(i));
+        if(birthdays.length){lines.push("","🎂 *ANIVERSARIANTES*");birthdays.forEach(i=>lines.push(i.name+(mode==="short"?"":([i.role,i.org].filter(Boolean).length?" — "+[i.role,i.org].filter(Boolean).join(" · "):""))));}
+        if(timed.length){lines.push("","📋 *COMPROMISSOS*");timed.forEach(i=>{lines.push("", "*"+formatRange(i)+"* — "+i.name+(!active(i)?" ("+i.status+")":""));if(mode!=="short"){if(i.role||i.org)lines.push([i.role,i.org].filter(Boolean).join(" · "));if(i.place)lines.push("Local: "+i.place);if(i.topic)lines.push("Pauta: "+i.topic);}});}
+        if(gov.length){lines.push("","🏛 *AGENDA COM O GOVERNADOR*");gov.forEach(i=>lines.push(formatTime(i.start)+" — "+i.name+" ("+(i.confirmation||"Pendente")+")"));}
+        if(!birthdays.length&&!timed.length&&!gov.length)lines.push("","Nenhum registro para este dia.");
         return lines.join("\n");
       }
 
@@ -781,6 +779,11 @@
       /* ===== Inicialização ===== */
       function init() {
         document.addEventListener("keydown",e=>{if(e.altKey&&e.key.toLowerCase()==="n"&&!state.executive&&!document.querySelector("dialog[open]")){e.preventDefault();$("#choose").showModal();}});
+        $("#date-controls").prepend();$("#navigation").prepend($("#date-controls"));
+        $("#week-strip").onclick=e=>{const b=e.target.closest("[data-week-date]");if(b)goToDate(b.dataset.weekDate);};
+        $("#summary-mode").onchange=()=>$("#watext").textContent=buildSummary();
+        $("#quick-menu").onclick=e=>{const b=e.target.closest("[data-quick]"),i=state.items.find(x=>x.id===quickItem);if(!b||!i)return;const a=b.dataset.quick;closeQuickMenu();if(a==="details")showDetails(i);else if(a==="duplicate")duplicateItem(i);else if(a==="cancel"){if(confirm("Cancelar este compromisso?")){if(i.kind==="gov")i.confirmation="Cancelado";else i.status="Cancelado";saveItems();render();toast("Compromisso cancelado.");}}else{openForm(i.kind,i);if(a==="reschedule")form.elements.date.focus();if(a==="delete"){deleteCurrent();if(dialog.open)dialog.close();}}};
+        document.addEventListener("click",e=>{if(!e.target.closest("#quick-menu,[data-action=menu]"))closeQuickMenu();});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#quick-menu").hidden){closeQuickMenu();quickAnchor?.focus();}});window.addEventListener("resize",closeQuickMenu);window.addEventListener("scroll",closeQuickMenu,true);
         $("#filter").innerHTML = ['<option value="all">Todos os status</option>', ...STATUSES.map((s) => `<option>${s}</option>`)].join("");
         form.elements.status.innerHTML = STATUSES.map((s) => `<option>${s}</option>`).join("");
         form.elements.type.innerHTML = Object.keys(TYPES).map((t) => `<option>${t}</option>`).join("");
@@ -827,7 +830,7 @@
         dialog.addEventListener("click", (e) => { if (e.target === dialog) closeForm(); });
 
         // Atualiza o destaque "Agora" a cada minuto
-        setInterval(() => {renderList(dayItems("meeting"));renderLive();}, 60000);
+        setInterval(() => {if($("#quick-menu").hidden){renderList(dayItems("meeting"));renderLive();renderAlerts(dayItems("meeting"));}}, 60000);
         render();
       }
 

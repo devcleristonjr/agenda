@@ -57,58 +57,11 @@
         box-shadow: 0 3px 8px #0003;
       }
       .brand { font-weight: 900; font-size: 20px; letter-spacing: 0.08em; white-space: nowrap; }
-      .brand small { display: block; font-size: 9px; font-weight: 600; letter-spacing: 0.04em; }
-      .nav { display: flex; align-self: stretch; flex: 1; }
-      .nav a {
-        display: flex;
-        align-items: center;
-        padding: 0 12px;
-        font-size: 12px;
-        font-weight: 700;
-        color: #ffffffcc;
-        text-decoration: none;
-        border-bottom: 4px solid transparent;
-      }
-      .nav a:hover { color: #fff; background: #ffffff0d; }
-      .nav a[aria-current="page"] { color: #fff; background: #ffffff1a; border-bottom-color: #fff; }
-      .user { display: flex; align-items: center; gap: 9px; white-space: nowrap; font-weight: 600; }
-      .avatar {
-        display: grid;
-        place-items: center;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background: #ffffff26;
-        font-size: 11px;
-        font-weight: 800;
-      }
+      .active-tab { display: flex; align-items: center; align-self: stretch; padding: 0 16px; font-weight: 700; background: #ffffff1a; border-bottom: 4px solid #fff; }
 
       /* ===== Estrutura ===== */
-      .shell { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 58px); }
-      aside { background: var(--surface); border-right: 1px solid var(--line); padding: 18px 12px; }
-      .side-title {
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.13em;
-        color: #94a3b8;
-        font-weight: 800;
-        padding: 0 10px 9px;
-      }
-      .side-title:not(:first-child) { margin-top: 20px; }
-      .side a {
-        display: block;
-        padding: 10px 12px;
-        margin: 2px 0;
-        border-radius: 7px;
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--ink);
-        text-decoration: none;
-      }
-      .side a:hover { background: #f8fafc; }
-      .side a[aria-current="page"] { background: var(--wine-tint); color: var(--wine); }
-      main { padding: 20px; min-width: 0; max-width: 1180px; }
-      .bread { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+      .shell { min-height: calc(100vh - 58px); }
+      main { padding: 20px; min-width: 0; width: 100%; max-width: 1440px; margin: 0 auto; }
 
       .title { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
       .title h1 { margin: 0; color: var(--ink-strong); font-size: 22px; }
@@ -263,58 +216,29 @@
         .row .state, .row .acts { grid-column: 1 / -1; justify-content: flex-start; }
       }
       @media (max-width: 800px) {
-        .shell { grid-template-columns: 1fr; }
-        aside, .nav { display: none; }
         .stats { grid-template-columns: 1fr 1fr; }
       }
       @media (max-width: 500px) {
         .stats, .tools, .form { grid-template-columns: 1fr; }
         .wide { grid-column: auto; }
         .title { flex-direction: column; }
-        .user span:last-child { display: none; }
+        main { padding: 12px; }
       }
       @media (prefers-reduced-motion: reduce) {
         * { transition: none !important; scroll-behavior: auto !important; }
       }
-    </style>
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;padding:10px}.calendar-day{min-height:95px;text-align:left;background:white;border:1px solid var(--line);border-radius:6px;padding:7px;overflow-wrap:anywhere}.calendar-day[aria-current="date"]{border:2px solid var(--wine)}.calendar-day small{display:block;margin-top:5px;border-left:3px solid var(--event-color,var(--wine));padding-left:4px}.calendar-day.muted{opacity:.55}.form textarea{width:100%;min-height:65px;border:1px solid var(--line);border-radius:5px;padding:8px;font:inherit}.form[data-event="true"] .hearing-only,.form[data-birthday="true"] .event-only,.form:not([data-event="true"]) .event-only,.form:not([data-birthday="true"]) .birthday-only,.form:not([data-kind="gov"]) .gov-only,.form[data-birthday="true"] .hearing-only{display:none}.form{max-height:75vh;overflow:auto}@media(max-width:650px){.calendar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}} @media print{.top,.tools,.date-nav,.acts,#new,#new-gov,#views,#print{display:none!important}.shell{display:block}main{max-width:none}}
+</style>
   </head>
   <body>
     <header class="top">
-      <div class="brand">SIGOV<small>SISTEMA INTEGRADO DE GOVERNO</small></div>
-      <nav class="nav" aria-label="Módulos">
-        <a href="#">Home</a>
-        <a href="#">Cadastros</a>
-        <a href="#">Institucional</a>
-        <a href="#" aria-current="page">Audiência e Eventos</a>
-        <a href="#">Pleitos</a>
-        <a href="#">Gestão</a>
-        <a href="#">Configurações</a>
-      </nav>
-      <div class="user"><span class="avatar" aria-hidden="true">VS</span><span>Vinicius</span></div>
+      <div class="brand">SIGOV</div>
+      <span class="active-tab" aria-current="page">Agenda</span>
     </header>
 
     <div class="shell">
-      <aside>
-        <nav class="side" aria-label="Audiência e Eventos">
-          <div class="side-title">Audiência e Eventos</div>
-          <a href="#">Novo registro</a>
-          <a href="#" aria-current="page">Agenda e recepção</a>
-          <a href="#">Convites</a>
-          <a href="#">Controle de acesso</a>
-          <a href="#">Relatórios</a>
-          <div class="side-title">Fluxo do evento</div>
-          <a href="#">1. Dados gerais</a>
-          <a href="#">2. Convocação</a>
-          <a href="#">3. Notas técnicas</a>
-          <a href="#">4. Coordenação</a>
-          <a href="#">5. Cerimonial</a>
-          <a href="#">6. SECOM</a>
-          <a href="#">7. Validação SERIN</a>
-        </nav>
-      </aside>
-
       <main>
-        <div class="bread">Audiência e Eventos / Agenda e Recepção</div>
+        
 
         <div class="title">
           <div>
@@ -327,9 +251,11 @@
               <button class="btn light sm" id="today">Hoje</button>
             </div>
           </div>
-          <button class="btn primary" id="new">+ Novo registro</button>
+          <div><button class="btn light" id="print">Imprimir</button> <button class="btn primary" id="new">+ Novo registro</button></div>
         </div>
 
+        <div id="views" class="date-nav" role="group" aria-label="Visualização"><button class="btn light" data-view="day">Dia</button><button class="btn light" data-view="week">Semana</button><button class="btn light" data-view="month">Mês</button></div>
+        <section class="card" id="calendar" hidden></section>
         <section class="stats" aria-label="Resumo do dia">
           <div class="card stat" style="--c: var(--wine)"><span>Compromissos</span><strong id="st-total">0</strong></div>
           <div class="card stat" style="--c: var(--wait)"><span>Aguardando</span><strong id="st-wait">0</strong></div>
@@ -368,16 +294,16 @@
     <dialog id="dialog">
       <div class="mhead" id="dialog-title">Novo registro de agenda</div>
       <form class="form" id="form" method="dialog" novalidate>
-        <input type="hidden" name="id" />
+        <input type="hidden" name="id" /><label class="wide">Data<input type="date" name="date" required /></label>
         <label class="meeting-only wide">Tipo<select name="type"></select></label>
         <label class="timed-only">Horário de início<input name="start" type="time" required /></label>
         <label class="meeting-only timed-only">Horário de fim<input name="end" type="time" required /></label>
         <label class="wide"><span id="name-label">Participante / compromisso</span><input name="name" required autocomplete="off" /></label>
-        <label class="meeting-only timed-only">Status<select name="status"></select></label>
-        <label class="meeting-only">Cargo / função<input name="role" autocomplete="off" /></label>
+        <label class="meeting-only timed-only hearing-only">Status<select name="status"></select></label>
+        <label class="meeting-only person-only">Cargo / função<input name="role" autocomplete="off" /></label>
         <label class="meeting-only">Município / instituição<input name="org" autocomplete="off" /></label>
         <label class="meeting-only timed-only wide">Local<input name="place" required /></label>
-        <div class="actions">
+        <label class="meeting-only timed-only wide">Pauta<input name="topic" /></label><label class="meeting-only event-only wide">Endereço<input name="address" /></label><label class="meeting-only birthday-only wide">Repetição<select name="annual"><option value="no">Somente nesta data</option><option value="yes">Anualmente</option></select></label><label class="gov-only wide">Confirmação<select name="confirmation"><option>Pendente</option><option>Confirmado</option><option>Cancelado</option></select></label><label class="wide">Observações internas<textarea name="notes"></textarea></label><div class="actions">
           <button type="button" class="btn danger" id="delete" hidden>Excluir</button>
           <button type="button" class="btn light" id="cancel">Cancelar</button>
           <button type="submit" class="btn primary">Salvar</button>
@@ -396,7 +322,7 @@
       const STORAGE_KEY = "sigov.agenda.v4";
       const DEMO_DATE = "2026-11-24"; // data dos dados de exemplo
 
-      const STATUSES = ["Previsto", "Aguardando", "No prédio", "Finalizado"];
+      const STATUSES = ["Previsto", "Aguardando", "No prédio", "Finalizado", "Cancelado", "Não compareceu"];
       const STATUS_CLASS = {
         "Previsto": "",
         "Aguardando": "s-wait",
@@ -471,13 +397,16 @@
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.items)); } catch { /* ignora */ }
       }
 
-      const state = { items: loadItems(), date: DEMO_DATE, query: "", status: "all", type: "all" };
+      const state = { items: loadItems(), date: DEMO_DATE, query: "", status: "all", type: "all", view: "day" };
 
       /* ===== Consultas ===== */
       const byStart = (a, b) => Number(isBirthday(b)) - Number(isBirthday(a)) || a.start.localeCompare(b.start);
-      const dayItems = (kind) => state.items.filter((i) => i.date === state.date && i.kind === kind).sort(byStart);
+      const occurs = (i,date) => i.date === date || (isBirthday(i) && i.annual === "yes" && date >= i.date && i.date.slice(5) === date.slice(5));
+      const dayItems = (kind) => state.items.filter((i) => occurs(i,state.date) && i.kind === kind).sort(byStart);
       const isBirthday = (item) => item.kind === "meeting" && typeOf(item) === "Aniversário";
-      const overlaps = (a, b) => !isBirthday(a) && !isBirthday(b) && a.start < b.end && b.start < a.end;
+      const active = (i) => !["Cancelado","Não compareceu"].includes(i.status);
+      const isHearing = (i) => i.kind === "meeting" && typeOf(i) === "Audiência";
+      const overlaps = (a, b) => active(a) && active(b) && !isBirthday(a) && !isBirthday(b) && a.start < b.end && b.start < a.end;
 
       function findConflicts(meetings) {
         const ids = new Set();
@@ -490,7 +419,7 @@
       function currentMeetingId(meetings) {
         if (state.date !== toISODate(new Date())) return null;
         const now = nowHHMM();
-        return meetings.find((m) => !isBirthday(m) && m.start <= now && now < m.end && m.status !== "Finalizado")?.id ?? null;
+        return meetings.find((m) => active(m) && !isBirthday(m) && m.start <= now && now < m.end && m.status !== "Finalizado")?.id ?? null;
       }
 
       function filterMeetings(meetings) {
@@ -510,7 +439,7 @@
       }
 
       function renderStats(meetings, gov) {
-        const count = (status) => meetings.filter((m) => !isBirthday(m) && m.status === status).length;
+        const count = (status) => meetings.filter((m) => isHearing(m) && m.status === status).length;
         $("#st-total").textContent = meetings.length + gov.length;
         $("#st-wait").textContent = count("Aguardando");
         $("#st-inside").textContent = count("No prédio");
@@ -519,9 +448,9 @@
 
       function rowTemplate(m, { conflict, current }) {
         const birthday = isBirthday(m);
-        const cls = birthday ? "" : STATUS_CLASS[m.status];
+        const cls = isHearing(m) ? (STATUS_CLASS[m.status] || "") : "";
         const type = typeOf(m);
-        const next = birthday ? null : NEXT_STEP[m.status];
+        const next = isHearing(m) ? NEXT_STEP[m.status] : null;
         const detail = [m.role, m.org].filter(Boolean).join(" - ");
         return `
           <article class="row ${cls} ${current ? "now" : ""}" style="--type-color: ${TYPES[type]}">
@@ -530,9 +459,9 @@
               <div class="name">${escapeHtml(m.name)}</div>
               <div class="sub"><i class="dot" style="background: ${TYPES[type]}"></i>${type}${detail ? ` - ${escapeHtml(detail)}` : ""}</div>
             </div>
-            <div class="place">${birthday ? "" : escapeHtml(m.place)}</div>
+            <div class="place">${birthday ? "" : escapeHtml(m.place)}${m.address ? `<div class="sub">${escapeHtml(m.address)}</div>` : ""}${m.topic ? `<div class="sub">Pauta: ${escapeHtml(m.topic)}</div>` : ""}${isHearing(m) && m.arrivedAt ? `<div class="sub">Chegada: ${escapeHtml(m.arrivedAt)}${m.startedAt ? " · Início: "+escapeHtml(m.startedAt) : ""}${m.finishedAt ? " · Fim: "+escapeHtml(m.finishedAt) : ""}</div>` : ""}</div>
             <div class="state">
-              ${birthday ? "" : `<span class="pill ${cls}">${m.status}</span>`}
+              ${isHearing(m) ? `<span class="pill ${cls}">${escapeHtml(m.status)}</span>` : ""}
               ${current ? '<span class="pill now-tag">Agora</span>' : ""}
               ${conflict ? '<span class="pill warn">Conflito de horário</span>' : ""}
             </div>
@@ -565,14 +494,34 @@
 
       function renderGov(gov) {
         $("#gov").innerHTML = gov.length
-          ? gov.map((g) => `<button class="govitem" data-action="edit" data-id="${g.id}"><b class="time-num">${formatTime(g.start)}</b>${escapeHtml(g.name)}</button>`).join("")
+          ? gov.map((g) => `<button class="govitem" data-action="edit" data-id="${g.id}"><b class="time-num">${formatTime(g.start)}</b>${escapeHtml(g.name)}<small style="display:block">${escapeHtml(g.confirmation || "Pendente")}</small></button>`).join("")
           : '<p class="govempty">Nenhuma reserva para este dia.</p>';
       }
 
+      function renderCalendar() {
+        const panel = $("#calendar");
+        panel.hidden = state.view === "day";
+        document.querySelectorAll("[data-view]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.view===state.view)));
+        if(panel.hidden) return;
+        const d=parseISODate(state.date);
+        const first=state.view==="week"?shiftDate(state.date,-((d.getDay()+6)%7)):toISODate(new Date(d.getFullYear(),d.getMonth(),1,12));
+        const offset=state.view==="month"?(parseISODate(first).getDay()+6)%7:0;
+        const start=shiftDate(first,-offset);
+        const n=state.view==="week"?7:Math.ceil((offset+new Date(d.getFullYear(),d.getMonth()+1,0).getDate())/7)*7;
+        panel.innerHTML='<div class="head">'+escapeHtml(state.view==="week"?"Semana de "+formatShortDate(first):d.toLocaleDateString("pt-BR",{month:"long",year:"numeric"}))+'</div><div class="calendar-grid">'+Array.from({length:n},(_,j)=>{
+          const date=shiftDate(start,j), items=state.items.filter(i=>occurs(i,date)).sort(byStart);
+          return '<button class="calendar-day '+(date.slice(0,7)!==state.date.slice(0,7)&&state.view==="month"?"muted":"")+'" data-date="'+date+'" aria-current="'+(date===state.date?"date":"false")+'"><b>'+formatShortDate(date).slice(0,5)+' · '+escapeHtml(formatWeekday(date))+'</b>'+items.map(i=>'<small style="--event-color:'+(i.kind==="gov"?"var(--wine)":TYPES[typeOf(i)])+'">'+(isBirthday(i)?"🎂 ":escapeHtml(formatTime(i.start))+" ")+escapeHtml(i.name)+'</small>').join("")+'</button>';
+        }).join("")+'</div>';
+      }
+      function navigate(delta){
+        if(state.view==="month"){const d=parseISODate(state.date);d.setDate(1);d.setMonth(d.getMonth()+delta);goToDate(toISODate(d));}
+        else goToDate(shiftDate(state.date,delta*(state.view==="week"?7:1)));
+      }
       function render() {
         const meetings = dayItems("meeting");
         const gov = dayItems("gov");
         renderHeader();
+        renderCalendar();
         renderStats(meetings, gov);
         renderLegend(meetings);
         renderList(meetings);
@@ -597,7 +546,7 @@
       function openForm(kind, item = null) {
         const isGov = kind === "gov";
         form.reset();
-        form.querySelectorAll("input, select").forEach((el) => (el.disabled = false));
+        form.querySelectorAll("input, select, textarea").forEach((el) => (el.disabled = false));
         form.dataset.kind = kind;
         // Campos desabilitados não são validados nem enviados
         form.querySelectorAll(".meeting-only :is(input, select)").forEach((el) => (el.disabled = isGov));
@@ -609,8 +558,8 @@
         $("#delete").hidden = !item;
 
         const values = item
-          ? { ...item, type: typeOf(item) }
-          : { place: DEFAULT_PLACE, status: "Previsto", type: DEFAULT_TYPE };
+          ? { status: "Previsto", confirmation: "Pendente", annual: "no", ...item, type: typeOf(item) }
+          : { date: state.date, place: DEFAULT_PLACE, status: "Previsto", type: DEFAULT_TYPE, annual: "no", confirmation: "Pendente" };
         for (const [field, value] of Object.entries({ id: item?.id ?? "", ...values })) {
           if (form.elements[field] && !form.elements[field].disabled) form.elements[field].value = value ?? "";
         }
@@ -621,11 +570,14 @@
       function syncFormType() {
         const gov = form.dataset.kind === "gov";
         const birthday = !gov && form.elements.type.value === "Aniversário";
+        const event = !gov && form.elements.type.value === "Evento";
         form.dataset.birthday = String(birthday);
+        form.dataset.event = String(event);
         form.querySelectorAll(".timed-only :is(input, select)").forEach((el) => {
           el.disabled = birthday || (gov && el.closest(".meeting-only") !== null);
         });
-        $("#name-label").textContent = gov ? "Descrição da reserva" : birthday ? "Nome do aniversariante" : "Participante / compromisso";
+        form.querySelectorAll(".hearing-only,.event-only,.birthday-only,.gov-only,.person-only").forEach(label=>{const hidden=(label.matches(".hearing-only")&&(gov||birthday||event))||(label.matches(".event-only")&&!event)||(label.matches(".birthday-only")&&!birthday)||(label.matches(".gov-only")&&!gov)||(label.matches(".person-only")&&(gov||event));label.hidden=hidden;label.querySelectorAll("input,select,textarea").forEach(el=>el.disabled=hidden);});
+        $("#name-label").textContent = gov ? "Descrição da reserva" : birthday ? "Nome do aniversariante" : event ? "Nome do evento" : "Participante / compromisso";
         validateTimes();
       }
 
@@ -647,19 +599,22 @@
         const item = {
           id: data.id || newId(),
           kind: form.dataset.kind,
-          date: existing?.date ?? state.date,
+          date: data.date,
+          topic: (data.topic ?? "").trim(), address: (data.address ?? "").trim(), notes: (data.notes ?? "").trim(), annual: data.annual ?? "no", confirmation: data.confirmation ?? "",
+          arrivedAt: data.type === "Audiência" && existing?.date === data.date ? existing.arrivedAt ?? "" : "", startedAt: data.type === "Audiência" && existing?.date === data.date ? existing.startedAt ?? "" : "", finishedAt: data.type === "Audiência" && existing?.date === data.date ? existing.finishedAt ?? "" : "",
           start: data.start ?? "",
           end: data.end ?? "",
           name: data.name.trim(),
           role: (data.role ?? "").trim(),
           org: (data.org ?? "").trim(),
           place: (data.place ?? "").trim(),
-          status: data.status ?? "",
+          status: data.type === "Audiência" ? (existing && existing.date !== data.date ? "Previsto" : data.status || "Previsto") : "",
           type: isGov ? "" : data.type,
         };
 
         state.items = existing ? state.items.map((i) => (i.id === item.id ? item : i)) : [...state.items, item];
         saveItems();
+        state.date = item.date;
         dialog.close();
         render();
 
@@ -680,9 +635,11 @@
       /* ===== Ações ===== */
       function advanceStatus(id) {
         const item = state.items.find((i) => i.id === id);
-        const step = item && !isBirthday(item) && NEXT_STEP[item.status];
+        const step = item && isHearing(item) && NEXT_STEP[item.status];
         if (!step) return;
         item.status = step.to;
+        const field = {"Aguardando":"arrivedAt","No prédio":"startedAt","Finalizado":"finishedAt"}[step.to];
+        if(field) item[field] = nowHHMM();
         saveItems();
         render();
       }
@@ -715,9 +672,10 @@
         const blocks = meetings.map((m) => {
           const detail = [m.role, m.org].filter(Boolean).join(" - ");
           if (isBirthday(m)) return `🎂 *Aniversário:* ${m.name}${detail ? ` | ${detail}` : ""}`;
+          if (!active(m)) return `*${m.status}:* ${m.name}`;
           return [
             `🕞 *Horário ${formatRange(m)}*`,
-            `🔹 *Participante:* ${m.name}${detail ? ` | ${detail}` : ""}`,
+            `🔹 *${typeOf(m)==="Evento"?"Evento":"Participante"}:* ${m.name}${detail ? ` | ${detail}` : ""}`,
             ...(singlePlace || !m.place ? [] : [`📍 *Local:* ${m.place}`]),
           ].join("\n");
         });
@@ -725,7 +683,7 @@
 
         if (gov.length) {
           lines.push("", "‼️ *RESERVAS DE AGENDA COM O GOVERNADOR* ‼️");
-          gov.forEach((g) => lines.push(`*${formatTime(g.start)} | ${g.name.toLocaleUpperCase("pt-BR")}*`));
+          gov.forEach((g) => lines.push(`*${formatTime(g.start)} | ${g.name.toLocaleUpperCase("pt-BR")}* (${g.confirmation || "Pendente"})`));
         }
         return lines.join("\n");
       }
@@ -775,11 +733,14 @@
         $("#list").addEventListener("click", handleItemClick);
         $("#gov").addEventListener("click", handleItemClick);
 
-        $("#prev").addEventListener("click", () => goToDate(shiftDate(state.date, -1)));
-        $("#next").addEventListener("click", () => goToDate(shiftDate(state.date, 1)));
+        $("#prev").addEventListener("click", () => navigate(-1));
+        $("#next").addEventListener("click", () => navigate(1));
         $("#today").addEventListener("click", () => goToDate(toISODate(new Date())));
         $("#date").addEventListener("change", (e) => goToDate(e.target.value));
 
+        $("#views").addEventListener("click",e=>{const b=e.target.closest("[data-view]");if(b){state.view=b.dataset.view;render();}});
+        $("#calendar").addEventListener("click",e=>{const b=e.target.closest("[data-date]");if(b){state.view="day";goToDate(b.dataset.date);}});
+        $("#print").addEventListener("click",()=>window.print());
         $("#whats").addEventListener("click", toggleSummary);
         $("#copy").addEventListener("click", copySummary);
 

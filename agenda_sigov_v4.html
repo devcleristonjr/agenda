@@ -238,7 +238,7 @@
       }
       .form input:user-invalid { border-color: #dc2626; }
       .wide { grid-column: 1 / -1; }
-      .form[data-kind="gov"] .meeting-only { display: none; }
+      .form[data-kind="gov"] .meeting-only, .form[data-birthday="true"] .timed-only { display: none; }
       .actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 8px; }
 
       /* ===== Aviso ===== */
@@ -369,14 +369,14 @@
       <div class="mhead" id="dialog-title">Novo registro de agenda</div>
       <form class="form" id="form" method="dialog" novalidate>
         <input type="hidden" name="id" />
-        <label>Horário de início<input name="start" type="time" required /></label>
-        <label class="meeting-only">Horário de fim<input name="end" type="time" required /></label>
+        <label class="meeting-only wide">Tipo<select name="type"></select></label>
+        <label class="timed-only">Horário de início<input name="start" type="time" required /></label>
+        <label class="meeting-only timed-only">Horário de fim<input name="end" type="time" required /></label>
         <label class="wide"><span id="name-label">Participante / compromisso</span><input name="name" required autocomplete="off" /></label>
-        <label class="meeting-only">Tipo<select name="type"></select></label>
-        <label class="meeting-only">Status<select name="status"></select></label>
+        <label class="meeting-only timed-only">Status<select name="status"></select></label>
         <label class="meeting-only">Cargo / função<input name="role" autocomplete="off" /></label>
         <label class="meeting-only">Município / instituição<input name="org" autocomplete="off" /></label>
-        <label class="meeting-only wide">Local<input name="place" required /></label>
+        <label class="meeting-only timed-only wide">Local<input name="place" required /></label>
         <div class="actions">
           <button type="button" class="btn danger" id="delete" hidden>Excluir</button>
           <button type="button" class="btn light" id="cancel">Cancelar</button>
@@ -474,9 +474,10 @@
       const state = { items: loadItems(), date: DEMO_DATE, query: "", status: "all", type: "all" };
 
       /* ===== Consultas ===== */
-      const byStart = (a, b) => a.start.localeCompare(b.start);
+      const byStart = (a, b) => Number(isBirthday(b)) - Number(isBirthday(a)) || a.start.localeCompare(b.start);
       const dayItems = (kind) => state.items.filter((i) => i.date === state.date && i.kind === kind).sort(byStart);
-      const overlaps = (a, b) => a.start < b.end && b.start < a.end;
+      const isBirthday = (item) => item.kind === "meeting" && typeOf(item) === "Aniversário";
+      const overlaps = (a, b) => !isBirthday(a) && !isBirthday(b) && a.start < b.end && b.start < a.end;
 
       function findConflicts(meetings) {
         const ids = new Set();
@@ -489,7 +490,7 @@
       function currentMeetingId(meetings) {
         if (state.date !== toISODate(new Date())) return null;
         const now = nowHHMM();
-        return meetings.find((m) => m.start <= now && now < m.end && m.status !== "Finalizado")?.id ?? null;
+        return meetings.find((m) => !isBirthday(m) && m.start <= now && now < m.end && m.status !== "Finalizado")?.id ?? null;
       }
 
       function filterMeetings(meetings) {
@@ -509,7 +510,7 @@
       }
 
       function renderStats(meetings, gov) {
-        const count = (status) => meetings.filter((m) => m.status === status).length;
+        const count = (status) => meetings.filter((m) => !isBirthday(m) && m.status === status).length;
         $("#st-total").textContent = meetings.length + gov.length;
         $("#st-wait").textContent = count("Aguardando");
         $("#st-inside").textContent = count("No prédio");
@@ -517,20 +518,21 @@
       }
 
       function rowTemplate(m, { conflict, current }) {
-        const cls = STATUS_CLASS[m.status];
+        const birthday = isBirthday(m);
+        const cls = birthday ? "" : STATUS_CLASS[m.status];
         const type = typeOf(m);
-        const next = NEXT_STEP[m.status];
+        const next = birthday ? null : NEXT_STEP[m.status];
         const detail = [m.role, m.org].filter(Boolean).join(" - ");
         return `
           <article class="row ${cls} ${current ? "now" : ""}" style="--type-color: ${TYPES[type]}">
-            <div class="time time-num"><strong>${formatTime(m.start)}</strong><span>até ${formatTime(m.end)}</span></div>
+            <div class="time time-num">${birthday ? "<strong>Dia todo</strong>" : `<strong>${formatTime(m.start)}</strong><span>até ${formatTime(m.end)}</span>`}</div>
             <div>
               <div class="name">${escapeHtml(m.name)}</div>
-              <div class="sub"><i class="dot" style="background: ${TYPES[type]}"></i>${type} - ${escapeHtml(detail) || "sem cargo ou instituição"}</div>
+              <div class="sub"><i class="dot" style="background: ${TYPES[type]}"></i>${type}${detail ? ` - ${escapeHtml(detail)}` : ""}</div>
             </div>
-            <div class="place">${escapeHtml(m.place)}</div>
+            <div class="place">${birthday ? "" : escapeHtml(m.place)}</div>
             <div class="state">
-              <span class="pill ${cls}">${m.status}</span>
+              ${birthday ? "" : `<span class="pill ${cls}">${m.status}</span>`}
               ${current ? '<span class="pill now-tag">Agora</span>' : ""}
               ${conflict ? '<span class="pill warn">Conflito de horário</span>' : ""}
             </div>
@@ -595,6 +597,7 @@
       function openForm(kind, item = null) {
         const isGov = kind === "gov";
         form.reset();
+        form.querySelectorAll("input, select").forEach((el) => (el.disabled = false));
         form.dataset.kind = kind;
         // Campos desabilitados não são validados nem enviados
         form.querySelectorAll(".meeting-only :is(input, select)").forEach((el) => (el.disabled = isGov));
@@ -611,13 +614,25 @@
         for (const [field, value] of Object.entries({ id: item?.id ?? "", ...values })) {
           if (form.elements[field] && !form.elements[field].disabled) form.elements[field].value = value ?? "";
         }
+        syncFormType();
         dialog.showModal();
+      }
+
+      function syncFormType() {
+        const gov = form.dataset.kind === "gov";
+        const birthday = !gov && form.elements.type.value === "Aniversário";
+        form.dataset.birthday = String(birthday);
+        form.querySelectorAll(".timed-only :is(input, select)").forEach((el) => {
+          el.disabled = birthday || (gov && el.closest(".meeting-only") !== null);
+        });
+        $("#name-label").textContent = gov ? "Descrição da reserva" : birthday ? "Nome do aniversariante" : "Participante / compromisso";
+        validateTimes();
       }
 
       // O horário de fim precisa ser posterior ao de início
       function validateTimes() {
         const { start, end } = form.elements;
-        end.setCustomValidity(end.value && start.value && end.value <= start.value
+        end.setCustomValidity(!end.disabled && end.value && start.value && end.value <= start.value
           ? "O horário de fim deve ser posterior ao horário de início." : "");
       }
 
@@ -633,13 +648,13 @@
           id: data.id || newId(),
           kind: form.dataset.kind,
           date: existing?.date ?? state.date,
-          start: data.start,
-          end: isGov ? "" : data.end,
+          start: data.start ?? "",
+          end: data.end ?? "",
           name: data.name.trim(),
           role: (data.role ?? "").trim(),
           org: (data.org ?? "").trim(),
           place: (data.place ?? "").trim(),
-          status: isGov ? "" : data.status,
+          status: data.status ?? "",
           type: isGov ? "" : data.type,
         };
 
@@ -665,7 +680,7 @@
       /* ===== Ações ===== */
       function advanceStatus(id) {
         const item = state.items.find((i) => i.id === id);
-        const step = item && NEXT_STEP[item.status];
+        const step = item && !isBirthday(item) && NEXT_STEP[item.status];
         if (!step) return;
         item.status = step.to;
         saveItems();
@@ -691,7 +706,7 @@
       function buildSummary() {
         const meetings = dayItems("meeting");
         const gov = dayItems("gov");
-        const places = [...new Set(meetings.map((m) => m.place).filter(Boolean))];
+        const places = [...new Set(meetings.filter((m) => !isBirthday(m)).map((m) => m.place).filter(Boolean))];
         const singlePlace = places.length === 1;
 
         const lines = [`*Agenda Sec. ${SECRETARY} - ${formatShortDate(state.date)} (${formatWeekday(state.date)})*`];
@@ -699,6 +714,7 @@
 
         const blocks = meetings.map((m) => {
           const detail = [m.role, m.org].filter(Boolean).join(" - ");
+          if (isBirthday(m)) return `🎂 *Aniversário:* ${m.name}${detail ? ` | ${detail}` : ""}`;
           return [
             `🕞 *Horário ${formatRange(m)}*`,
             `🔹 *Participante:* ${m.name}${detail ? ` | ${detail}` : ""}`,
@@ -768,6 +784,7 @@
         $("#copy").addEventListener("click", copySummary);
 
         form.addEventListener("submit", submitForm);
+        form.elements.type.addEventListener("change", syncFormType);
         form.elements.start.addEventListener("input", validateTimes);
         form.elements.end.addEventListener("input", validateTimes);
         $("#delete").addEventListener("click", deleteCurrent);

@@ -57,58 +57,11 @@
         box-shadow: 0 3px 8px #0003;
       }
       .brand { font-weight: 900; font-size: 20px; letter-spacing: 0.08em; white-space: nowrap; }
-      .brand small { display: block; font-size: 9px; font-weight: 600; letter-spacing: 0.04em; }
-      .nav { display: flex; align-self: stretch; flex: 1; }
-      .nav a {
-        display: flex;
-        align-items: center;
-        padding: 0 12px;
-        font-size: 12px;
-        font-weight: 700;
-        color: #ffffffcc;
-        text-decoration: none;
-        border-bottom: 4px solid transparent;
-      }
-      .nav a:hover { color: #fff; background: #ffffff0d; }
-      .nav a[aria-current="page"] { color: #fff; background: #ffffff1a; border-bottom-color: #fff; }
-      .user { display: flex; align-items: center; gap: 9px; white-space: nowrap; font-weight: 600; }
-      .avatar {
-        display: grid;
-        place-items: center;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background: #ffffff26;
-        font-size: 11px;
-        font-weight: 800;
-      }
+      .active-tab { display: flex; align-items: center; align-self: stretch; padding: 0 16px; font-weight: 700; background: #ffffff1a; border-bottom: 4px solid #fff; }
 
       /* ===== Estrutura ===== */
-      .shell { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 58px); }
-      aside { background: var(--surface); border-right: 1px solid var(--line); padding: 18px 12px; }
-      .side-title {
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.13em;
-        color: #94a3b8;
-        font-weight: 800;
-        padding: 0 10px 9px;
-      }
-      .side-title:not(:first-child) { margin-top: 20px; }
-      .side a {
-        display: block;
-        padding: 10px 12px;
-        margin: 2px 0;
-        border-radius: 7px;
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--ink);
-        text-decoration: none;
-      }
-      .side a:hover { background: #f8fafc; }
-      .side a[aria-current="page"] { background: var(--wine-tint); color: var(--wine); }
-      main { padding: 20px; min-width: 0; max-width: 1180px; }
-      .bread { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+      .shell { min-height: calc(100vh - 58px); }
+      main { padding: 20px; min-width: 0; width: 100%; max-width: 1440px; margin: 0 auto; }
 
       .title { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
       .title h1 { margin: 0; color: var(--ink-strong); font-size: 22px; }
@@ -263,59 +216,29 @@
         .row .state, .row .acts { grid-column: 1 / -1; justify-content: flex-start; }
       }
       @media (max-width: 800px) {
-        .shell { grid-template-columns: 1fr; }
-        aside, .nav { display: none; }
         .stats { grid-template-columns: 1fr 1fr; }
       }
       @media (max-width: 500px) {
         .stats, .tools, .form { grid-template-columns: 1fr; }
         .wide { grid-column: auto; }
         .title { flex-direction: column; }
-        .user span:last-child { display: none; }
+        main { padding: 12px; }
       }
       @media (prefers-reduced-motion: reduce) {
         * { transition: none !important; scroll-behavior: auto !important; }
       }
-    .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;padding:10px}.calendar-day{min-height:95px;text-align:left;background:white;border:1px solid var(--line);border-radius:6px;padding:7px;overflow-wrap:anywhere}.calendar-day[aria-current="date"]{border:2px solid var(--wine)}.calendar-day small{display:block;margin-top:5px;border-left:3px solid var(--event-color,var(--wine));padding-left:4px}.calendar-day.muted{opacity:.55}.form textarea{width:100%;min-height:65px;border:1px solid var(--line);border-radius:5px;padding:8px;font:inherit}.form[data-event="true"] .hearing-only,.form[data-birthday="true"] .event-only,.form:not([data-event="true"]) .event-only,.form:not([data-birthday="true"]) .birthday-only,.form:not([data-kind="gov"]) .gov-only,.form[data-birthday="true"] .hearing-only{display:none}.form{max-height:75vh;overflow:auto}@media(max-width:650px){.calendar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}} @media print{aside,.top,.tools,.date-nav,.acts,#new,#new-gov,#views,#print{display:none!important}.shell{display:block}main{max-width:none}}
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;padding:10px}.calendar-day{min-height:95px;text-align:left;background:white;border:1px solid var(--line);border-radius:6px;padding:7px;overflow-wrap:anywhere}.calendar-day[aria-current="date"]{border:2px solid var(--wine)}.calendar-day small{display:block;margin-top:5px;border-left:3px solid var(--event-color,var(--wine));padding-left:4px}.calendar-day.muted{opacity:.55}.form textarea{width:100%;min-height:65px;border:1px solid var(--line);border-radius:5px;padding:8px;font:inherit}.form[data-event="true"] .hearing-only,.form[data-birthday="true"] .event-only,.form:not([data-event="true"]) .event-only,.form:not([data-birthday="true"]) .birthday-only,.form:not([data-kind="gov"]) .gov-only,.form[data-birthday="true"] .hearing-only{display:none}.form{max-height:75vh;overflow:auto}@media(max-width:650px){.calendar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}} @media print{.top,.tools,.date-nav,.acts,#new,#new-gov,#views,#print{display:none!important}.shell{display:block}main{max-width:none}}
 </style>
   </head>
   <body>
     <header class="top">
-      <div class="brand">SIGOV<small>SISTEMA INTEGRADO DE GOVERNO</small></div>
-      <nav class="nav" aria-label="Módulos">
-        <a href="#">Home</a>
-        <a href="#">Cadastros</a>
-        <a href="#">Institucional</a>
-        <a href="#" aria-current="page">Audiência e Eventos</a>
-        <a href="#">Pleitos</a>
-        <a href="#">Gestão</a>
-        <a href="#">Configurações</a>
-      </nav>
-      <div class="user"><span class="avatar" aria-hidden="true">VS</span><span>Vinicius</span></div>
+      <div class="brand">SIGOV</div>
+      <span class="active-tab" aria-current="page">Agenda</span>
     </header>
 
     <div class="shell">
-      <aside>
-        <nav class="side" aria-label="Audiência e Eventos">
-          <div class="side-title">Audiência e Eventos</div>
-          <a href="#">Novo registro</a>
-          <a href="#" aria-current="page">Agenda e recepção</a>
-          <a href="#">Convites</a>
-          <a href="#">Controle de acesso</a>
-          <a href="#">Relatórios</a>
-          <div class="side-title">Fluxo do evento</div>
-          <a href="#">1. Dados gerais</a>
-          <a href="#">2. Convocação</a>
-          <a href="#">3. Notas técnicas</a>
-          <a href="#">4. Coordenação</a>
-          <a href="#">5. Cerimonial</a>
-          <a href="#">6. SECOM</a>
-          <a href="#">7. Validação SERIN</a>
-        </nav>
-      </aside>
-
       <main>
-        <div class="bread">Audiência e Eventos / Agenda e Recepção</div>
+        
 
         <div class="title">
           <div>

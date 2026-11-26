@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SIGOV – Agenda e Recepção</title>
+    <style>
+      /* ===== Tokens ===== */
+      :root {
+        --wine: #970808;
+        --wine-bright: #9b0102;
+        --dark: #450f0f;
+        --wine-tint: #fff1f2;
+        --bg: #eef1f5;
+        --surface: #fff;
+        --line: #e2e8f0;
+        --ink: #334155;
+        --ink-strong: #1e293b;
+        --muted: #64748b;
+        --radius: 8px;
+        --header-bg: linear-gradient(90deg, var(--wine-bright), var(--dark));
+
+        --planned: #64748b;
+        --wait: #f59e0b;
+        --inside: #2563eb;
+        --done: #15803d;
+
+        /* Tipos de compromisso */
+        --t-birthday: #c0143c;
+        --t-hearing: #f5a30b;
+        --t-event: #8cc21a;
+      }
+
+      /* ===== Base ===== */
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font: 14px/1.45 "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      button, input, select { font: inherit; color: inherit; }
+      button { cursor: pointer; }
+      :focus-visible { outline: 2px solid var(--wine); outline-offset: 2px; }
+      [hidden] { display: none !important; }
+      .time-num { font-variant-numeric: tabular-nums; }
+
+      /* ===== Topo ===== */
+      .top {
+        height: 58px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 0 18px;
+        color: #fff;
+        background: var(--header-bg);
+        box-shadow: 0 3px 8px #0003;
+      }
+      .brand { font-weight: 900; font-size: 20px; letter-spacing: 0.08em; white-space: nowrap; }
+      .brand small { display: block; font-size: 9px; font-weight: 600; letter-spacing: 0.04em; }
+      .nav { display: flex; align-self: stretch; flex: 1; }
+      .nav a {
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #ffffffcc;
+        text-decoration: none;
+        border-bottom: 4px solid transparent;
+      }
+      .nav a:hover { color: #fff; background: #ffffff0d; }
+      .nav a[aria-current="page"] { color: #fff; background: #ffffff1a; border-bottom-color: #fff; }
+      .user { display: flex; align-items: center; gap: 9px; white-space: nowrap; font-weight: 600; }
+      .avatar {
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #ffffff26;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      /* ===== Estrutura ===== */
+      .shell { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 58px); }
+      aside { background: var(--surface); border-right: 1px solid var(--line); padding: 18px 12px; }
+      .side-title {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.13em;
+        color: #94a3b8;
+        font-weight: 800;
+        padding: 0 10px 9px;
+      }
+      .side-title:not(:first-child) { margin-top: 20px; }
+      .side a {
+        display: block;
+        padding: 10px 12px;
+        margin: 2px 0;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .side a:hover { background: #f8fafc; }
+      .side a[aria-current="page"] { background: var(--wine-tint); color: var(--wine); }
+      main { padding: 20px; min-width: 0; max-width: 1180px; }
+      .bread { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+
+      .title { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+      .title h1 { margin: 0; color: var(--ink-strong); font-size: 22px; }
+      .title p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+      .date-nav { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+      .date-nav input { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; }
+
+      /* ===== Componentes ===== */
+      .btn {
+        border: 1px solid transparent;
+        border-radius: 6px;
+        padding: 9px 13px;
+        font-weight: 700;
+        transition: background 0.15s, border-color 0.15s;
+      }
+      .btn.sm { padding: 5px 10px; font-size: 12px; }
+      .btn.primary { background: var(--wine); color: #fff; }
+      .btn.primary:hover { background: var(--dark); }
+      .btn.light { background: #fff; border-color: #cbd5e1; color: #475569; }
+      .btn.light:hover { background: #f8fafc; border-color: #94a3b8; }
+      .btn.danger { background: #fff; border-color: #fecaca; color: #b91c1c; margin-right: auto; }
+      .btn.danger:hover { background: #fef2f2; }
+
+      .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 1px 3px #0f172a0d; }
+      .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 13px; border-bottom: 1px solid var(--line); font-weight: 700; }
+      .head small { font-weight: 600; color: var(--muted); }
+
+      .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+      .stat { padding: 14px; border-left: 4px solid var(--c, var(--wine)); }
+      .stat span { font-size: 10px; color: var(--muted); font-weight: 800; text-transform: uppercase; }
+      .stat strong { display: block; font-size: 26px; line-height: 1.1; margin-top: 3px; color: var(--ink-strong); }
+
+      .tools { padding: 12px; display: grid; grid-template-columns: 1fr 170px auto; gap: 9px; margin-bottom: 14px; }
+      .tools input, .tools select { border: 1px solid #cbd5e1; border-radius: 5px; padding: 9px 10px; background: #fff; }
+
+      /* ===== Lista ===== */
+      .row {
+        --type-color: var(--t-hearing);
+        display: grid;
+        grid-template-columns: 92px minmax(0, 1.6fr) 80px 170px auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 13px;
+        border-bottom: 1px solid var(--line);
+        border-left: 4px solid var(--type-color);
+      }
+      .row:last-child { border-bottom: 0; }
+      .row:hover { background: #fffafa; }
+      .row.now { background: var(--wine-tint); }
+      .row.s-done .name { color: var(--muted); }
+      .time strong { display: block; font-weight: 900; color: var(--wine); font-size: 15px; }
+      .time span { font-size: 11px; color: var(--muted); }
+      .name { font-weight: 800; color: var(--ink-strong); }
+      .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+      .place { font-weight: 600; }
+      .state { display: flex; flex-wrap: wrap; gap: 5px; }
+      .acts { display: flex; gap: 6px; justify-content: flex-end; }
+
+      .pill { border-radius: 99px; padding: 4px 9px; font-size: 11px; font-weight: 800; background: #f1f5f9; color: #475569; }
+      .pill.s-wait { background: #fef3c7; color: #92400e; }
+      .pill.s-inside { background: #dbeafe; color: #1e40af; }
+      .pill.s-done { background: #dcfce7; color: #166534; }
+      .pill.now-tag { background: var(--wine); color: #fff; }
+      .pill.warn { background: #fee2e2; color: #991b1b; }
+
+      .legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 13px; border-bottom: 1px solid var(--line); }
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 5px 11px 5px 9px;
+        border: 1px solid var(--line);
+        border-radius: 99px;
+        background: #fff;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .legend-item:hover { border-color: #94a3b8; }
+      .legend-item[aria-pressed="true"] { border-color: var(--wine); background: var(--wine-tint); }
+      .legend-item span { color: var(--muted); font-weight: 700; }
+      .dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; flex: none; }
+      .sub .dot { margin-right: 6px; vertical-align: -1px; }
+
+      .empty { padding: 28px 16px; text-align: center; color: var(--muted); }
+
+      /* ===== Governador ===== */
+      .gov { margin-top: 14px; border-top: 4px solid var(--wine); }
+      .govgrid { padding: 13px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+      .govitem {
+        text-align: left;
+        padding: 11px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        border-radius: 6px;
+      }
+      .govitem:hover { border-color: #fb923c; }
+      .govitem b { display: block; color: var(--wine); }
+      .govempty { grid-column: 1 / -1; color: var(--muted); }
+
+      /* ===== WhatsApp ===== */
+      .wa { margin-top: 14px; padding: 14px; }
+      .wa pre {
+        white-space: pre-wrap;
+        font: inherit;
+        background: #f8fafc;
+        border: 1px solid var(--line);
+        padding: 12px;
+        border-radius: 6px;
+        margin: 10px 0;
+      }
+
+      /* ===== Modal ===== */
+      dialog { border: 0; padding: 0; border-radius: 9px; width: min(580px, calc(100% - 24px)); box-shadow: 0 20px 50px #0f172a66; }
+      dialog::backdrop { background: #0f172a99; }
+      .mhead { padding: 14px 16px; background: var(--header-bg); color: #fff; font-weight: 700; }
+      .form { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .form label { font-size: 12px; font-weight: 700; }
+      .form input, .form select {
+        display: block;
+        width: 100%;
+        margin-top: 5px;
+        padding: 9px;
+        border: 1px solid #cbd5e1;
+        border-radius: 5px;
+        font-weight: 400;
+        background: #fff;
+      }
+      .form input:user-invalid { border-color: #dc2626; }
+      .wide { grid-column: 1 / -1; }
+      .form[data-kind="gov"] .meeting-only { display: none; }
+      .actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 8px; }
+
+      /* ===== Aviso ===== */
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 22px;
+        transform: translateX(-50%);
+        max-width: calc(100% - 24px);
+        padding: 11px 16px;
+        border-radius: 8px;
+        background: var(--ink-strong);
+        color: #fff;
+        font-weight: 600;
+        box-shadow: 0 8px 24px #0f172a55;
+      }
+
+      /* ===== Responsivo ===== */
+      @media (max-width: 960px) {
+        .row { grid-template-columns: 92px minmax(0, 1fr); }
+        .row .place { grid-column: 2; margin-top: -8px; font-size: 12px; color: var(--muted); }
+        .row .state, .row .acts { grid-column: 1 / -1; justify-content: flex-start; }
+      }
+      @media (max-width: 800px) {
+        .shell { grid-template-columns: 1fr; }
+        aside, .nav { display: none; }
+        .stats { grid-template-columns: 1fr 1fr; }
+      }
+      @media (max-width: 500px) {
+        .stats, .tools, .form { grid-template-columns: 1fr; }
+        .wide { grid-column: auto; }
+        .title { flex-direction: column; }
+        .user span:last-child { display: none; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * { transition: none !important; scroll-behavior: auto !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">SIGOV<small>SISTEMA INTEGRADO DE GOVERNO</small></div>
+      <nav class="nav" aria-label="Módulos">
+        <a href="#">Home</a>
+        <a href="#">Cadastros</a>
+        <a href="#">Institucional</a>
+        <a href="#" aria-current="page">Audiência e Eventos</a>
+        <a href="#">Pleitos</a>
+        <a href="#">Gestão</a>
+        <a href="#">Configurações</a>
+      </nav>
+      <div class="user"><span class="avatar" aria-hidden="true">VS</span><span>Vinicius</span></div>
+    </header>
+
+    <div class="shell">
+      <aside>
+        <nav class="side" aria-label="Audiência e Eventos">
+          <div class="side-title">Audiência e Eventos</div>
+          <a href="#">Novo registro</a>
+          <a href="#" aria-current="page">Agenda e recepção</a>
+          <a href="#">Convites</a>
+          <a href="#">Controle de acesso</a>
+          <a href="#">Relatórios</a>
+          <div class="side-title">Fluxo do evento</div>
+          <a href="#">1. Dados gerais</a>
+          <a href="#">2. Convocação</a>
+          <a href="#">3. Notas técnicas</a>
+          <a href="#">4. Coordenação</a>
+          <a href="#">5. Cerimonial</a>
+          <a href="#">6. SECOM</a>
+          <a href="#">7. Validação SERIN</a>
+        </nav>
+      </aside>
+
+      <main>
+        <div class="bread">Audiência e Eventos / Agenda e Recepção</div>
+
+        <div class="title">
+          <div>
+            <h1>Agenda do Secretário</h1>
+            <p id="subtitle">Controle de compromissos, visitantes e atendimento no prédio</p>
+            <div class="date-nav">
+              <button class="btn light sm" id="prev" aria-label="Dia anterior">‹</button>
+              <input type="date" id="date" aria-label="Data da agenda" />
+              <button class="btn light sm" id="next" aria-label="Próximo dia">›</button>
+              <button class="btn light sm" id="today">Hoje</button>
+            </div>
+          </div>
+          <button class="btn primary" id="new">+ Novo registro</button>
+        </div>
+
+        <section class="stats" aria-label="Resumo do dia">
+          <div class="card stat" style="--c: var(--wine)"><span>Compromissos</span><strong id="st-total">0</strong></div>
+          <div class="card stat" style="--c: var(--wait)"><span>Aguardando</span><strong id="st-wait">0</strong></div>
+          <div class="card stat" style="--c: var(--inside)"><span>No prédio</span><strong id="st-inside">0</strong></div>
+          <div class="card stat" style="--c: var(--done)"><span>Finalizados</span><strong id="st-done">0</strong></div>
+        </section>
+
+        <section class="card tools">
+          <input id="search" type="search" placeholder="Buscar participante, município ou instituição" aria-label="Buscar" />
+          <select id="filter" aria-label="Filtrar por status"></select>
+          <button class="btn light" id="whats" aria-expanded="false" aria-controls="wa">Resumo WhatsApp</button>
+        </section>
+
+        <section class="card">
+          <div class="head"><span id="list-title"></span><small id="list-count"></small></div>
+          <div class="legend" id="legend" role="group" aria-label="Filtrar por tipo de compromisso"></div>
+          <div id="list"></div>
+        </section>
+
+        <section class="card gov">
+          <div class="head">
+            <span>Reservas de Agenda com o Governador</span>
+            <button class="btn light sm" id="new-gov">+ Reserva</button>
+          </div>
+          <div class="govgrid" id="gov"></div>
+        </section>
+
+        <section class="card wa" id="wa" hidden>
+          <b>Resumo para WhatsApp</b>
+          <pre id="watext"></pre>
+          <button class="btn primary" id="copy">Copiar texto</button>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="dialog">
+      <div class="mhead" id="dialog-title">Novo registro de agenda</div>
+      <form class="form" id="form" method="dialog" novalidate>
+        <input type="hidden" name="id" />
+        <label>Horário de início<input name="start" type="time" required /></label>
+        <label class="meeting-only">Horário de fim<input name="end" type="time" required /></label>
+        <label class="wide"><span id="name-label">Participante / compromisso</span><input name="name" required autocomplete="off" /></label>
+        <label class="meeting-only">Tipo<select name="type"></select></label>
+        <label class="meeting-only">Status<select name="status"></select></label>
+        <label class="meeting-only">Cargo / função<input name="role" autocomplete="off" /></label>
+        <label class="meeting-only">Município / instituição<input name="org" autocomplete="off" /></label>
+        <label class="meeting-only wide">Local<input name="place" required /></label>
+        <div class="actions">
+          <button type="button" class="btn danger" id="delete" hidden>Excluir</button>
+          <button type="button" class="btn light" id="cancel">Cancelar</button>
+          <button type="submit" class="btn primary">Salvar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+    <script>
+      "use strict";
+
+      /* ===== Configuração ===== */
+      const SECRETARY = "Adolpho Loyola";
+      const DEFAULT_PLACE = "COI";
+      const STORAGE_KEY = "sigov.agenda.v4";
+      const DEMO_DATE = "2026-11-24"; // data dos dados de exemplo
+
+      const STATUSES = ["Previsto", "Aguardando", "No prédio", "Finalizado"];
+      const STATUS_CLASS = {
+        "Previsto": "",
+        "Aguardando": "s-wait",
+        "No prédio": "s-inside",
+        "Finalizado": "s-done",
+      };
+      // Tipos de compromisso: cada um tem uma cor (definida em :root)
+      const TYPES = {
+        "Aniversário": "var(--t-birthday)",
+        "Audiência": "var(--t-hearing)",
+        "Evento": "var(--t-event)",
+      };
+      const DEFAULT_TYPE = "Audiência";
+      const typeOf = (item) => (item.type in TYPES ? item.type : DEFAULT_TYPE);
+
+      // Fluxo da recepção: cada status leva ao próximo
+      const NEXT_STEP = {
+        "Previsto": { to: "Aguardando", label: "Registrar chegada" },
+        "Aguardando": { to: "No prédio", label: "Iniciar atendimento" },
+        "No prédio": { to: "Finalizado", label: "Finalizar" },
+      };
+
+      /* ===== Utilitários ===== */
+      const $ = (selector) => document.querySelector(selector);
+      const pad = (n) => String(n).padStart(2, "0");
+      const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+      const escapeHtml = (value) =>
+        String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+      // Remove acentos e caixa para buscas tolerantes ("municipio" encontra "Município")
+      const fold = (text) => text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+
+      const toISODate = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+      const parseISODate = (iso) => new Date(`${iso}T12:00:00`);
+      const shiftDate = (iso, days) => {
+        const d = parseISODate(iso);
+        d.setDate(d.getDate() + days);
+        return toISODate(d);
+      };
+      const formatShortDate = (iso) => iso.split("-").reverse().join("/");
+      const formatWeekday = (iso) => parseISODate(iso).toLocaleDateString("pt-BR", { weekday: "long" });
+      const formatTime = (t) => t.replace(":", "h");
+      const formatRange = (item) => (item.end ? `${formatTime(item.start)} - ${formatTime(item.end)}` : formatTime(item.start));
+      const nowHHMM = () => { const d = new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+
+      /* ===== Dados e persistência ===== */
+      const meeting = (start, end, name, role, org, status, type = DEFAULT_TYPE) =>
+        ({ id: newId(), kind: "meeting", date: DEMO_DATE, start, end, name, role, org, place: DEFAULT_PLACE, status, type });
+      const reservation = (start, name) =>
+        ({ id: newId(), kind: "gov", date: DEMO_DATE, start, end: "", name, role: "", org: "", place: "", status: "", type: "" });
+
+      const seedData = () => [
+        meeting("08:30", "10:30", "Líderes de Partido da ALBA", "Café da manhã", "ALBA", "Finalizado", "Evento"),
+        meeting("10:30", "11:00", "Je", "Prefeito", "Ibirapitanga", "Aguardando"),
+        meeting("11:00", "12:00", "Silva Neto", "Deputado eleito", "ALBA", "Aguardando"),
+        meeting("15:30", "16:30", "Alan Mori", "Representante", "Energisa Gás", "Previsto"),
+        reservation("14:30", "Despacho GOV"),
+        reservation("16:30", "Reunião com a Comissão de Transição do Governo"),
+        reservation("18:00", "Reunião de Construção Município 417"),
+      ];
+
+      function loadItems() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+          if (Array.isArray(saved)) return saved;
+        } catch { /* sem armazenamento disponível: usa os dados de exemplo */ }
+        return seedData();
+      }
+
+      function saveItems() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.items)); } catch { /* ignora */ }
+      }
+
+      const state = { items: loadItems(), date: DEMO_DATE, query: "", status: "all", type: "all" };
+
+      /* ===== Consultas ===== */
+      const byStart = (a, b) => a.start.localeCompare(b.start);
+      const dayItems = (kind) => state.items.filter((i) => i.date === state.date && i.kind === kind).sort(byStart);
+      const overlaps = (a, b) => a.start < b.end && b.start < a.end;
+
+      function findConflicts(meetings) {
+        const ids = new Set();
+        meetings.forEach((a, i) => meetings.slice(i + 1).forEach((b) => {
+          if (overlaps(a, b)) { ids.add(a.id); ids.add(b.id); }
+        }));
+        return ids;
+      }
+
+      function currentMeetingId(meetings) {
+        if (state.date !== toISODate(new Date())) return null;
+        const now = nowHHMM();
+        return meetings.find((m) => m.start <= now && now < m.end && m.status !== "Finalizado")?.id ?? null;
+      }
+
+      function filterMeetings(meetings) {
+        const q = fold(state.query.trim());
+        return meetings.filter((m) =>
+          (state.status === "all" || m.status === state.status) &&
+          (state.type === "all" || typeOf(m) === state.type) &&
+          fold(`${m.name} ${m.role} ${m.org} ${m.place}`).includes(q));
+      }
+
+      /* ===== Renderização ===== */
+      function renderHeader() {
+        $("#date").value = state.date;
+        $("#subtitle").textContent =
+          `Controle de compromissos, visitantes e atendimento no prédio - ${formatShortDate(state.date)} (${formatWeekday(state.date)})`;
+        $("#list-title").textContent = `Agenda do dia - ${SECRETARY}`;
+      }
+
+      function renderStats(meetings, gov) {
+        const count = (status) => meetings.filter((m) => m.status === status).length;
+        $("#st-total").textContent = meetings.length + gov.length;
+        $("#st-wait").textContent = count("Aguardando");
+        $("#st-inside").textContent = count("No prédio");
+        $("#st-done").textContent = count("Finalizado");
+      }
+
+      function rowTemplate(m, { conflict, current }) {
+        const cls = STATUS_CLASS[m.status];
+        const type = typeOf(m);
+        const next = NEXT_STEP[m.status];
+        const detail = [m.role, m.org].filter(Boolean).join(" - ");
+        return `
+          <article class="row ${cls} ${current ? "now" : ""}" style="--type-color: ${TYPES[type]}">
+            <div class="time time-num"><strong>${formatTime(m.start)}</strong><span>até ${formatTime(m.end)}</span></div>
+            <div>
+              <div class="name">${escapeHtml(m.name)}</div>
+              <div class="sub"><i class="dot" style="background: ${TYPES[type]}"></i>${type} - ${escapeHtml(detail) || "sem cargo ou instituição"}</div>
+            </div>
+            <div class="place">${escapeHtml(m.place)}</div>
+            <div class="state">
+              <span class="pill ${cls}">${m.status}</span>
+              ${current ? '<span class="pill now-tag">Agora</span>' : ""}
+              ${conflict ? '<span class="pill warn">Conflito de horário</span>' : ""}
+            </div>
+            <div class="acts">
+              ${next ? `<button class="btn primary sm" data-action="advance" data-id="${m.id}">${next.label}</button>` : ""}
+              <button class="btn light sm" data-action="edit" data-id="${m.id}">Editar</button>
+            </div>
+          </article>`;
+      }
+
+      function renderList(meetings) {
+        const visible = filterMeetings(meetings);
+        const conflicts = findConflicts(meetings);
+        const currentId = currentMeetingId(meetings);
+        const filtering = state.query || state.status !== "all" || state.type !== "all";
+
+        $("#list-count").textContent = filtering ? `${visible.length} de ${meetings.length}` : `${meetings.length} compromissos`;
+        $("#list").innerHTML = visible.length
+          ? visible.map((m) => rowTemplate(m, { conflict: conflicts.has(m.id), current: m.id === currentId })).join("")
+          : `<div class="empty">${filtering ? "Nenhum compromisso encontrado com esses filtros." : 'Nenhum compromisso neste dia. Use "+ Novo registro" para adicionar.'}</div>`;
+      }
+
+      function renderLegend(meetings) {
+        $("#legend").innerHTML = Object.entries(TYPES).map(([type, color]) => {
+          const count = meetings.filter((m) => typeOf(m) === type).length;
+          return `<button class="legend-item" data-type="${type}" aria-pressed="${state.type === type}">
+            <i class="dot" style="background: ${color}"></i>${type}<span>${count}</span></button>`;
+        }).join("");
+      }
+
+      function renderGov(gov) {
+        $("#gov").innerHTML = gov.length
+          ? gov.map((g) => `<button class="govitem" data-action="edit" data-id="${g.id}"><b class="time-num">${formatTime(g.start)}</b>${escapeHtml(g.name)}</button>`).join("")
+          : '<p class="govempty">Nenhuma reserva para este dia.</p>';
+      }
+
+      function render() {
+        const meetings = dayItems("meeting");
+        const gov = dayItems("gov");
+        renderHeader();
+        renderStats(meetings, gov);
+        renderLegend(meetings);
+        renderList(meetings);
+        renderGov(gov);
+        if (!$("#wa").hidden) $("#watext").textContent = buildSummary();
+      }
+
+      /* ===== Aviso (toast) ===== */
+      let toastTimer;
+      function toast(message) {
+        const el = $("#toast");
+        el.textContent = message;
+        el.hidden = false;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => (el.hidden = true), 4000);
+      }
+
+      /* ===== Formulário ===== */
+      const dialog = $("#dialog");
+      const form = $("#form");
+
+      function openForm(kind, item = null) {
+        const isGov = kind === "gov";
+        form.reset();
+        form.dataset.kind = kind;
+        // Campos desabilitados não são validados nem enviados
+        form.querySelectorAll(".meeting-only :is(input, select)").forEach((el) => (el.disabled = isGov));
+
+        $("#dialog-title").textContent = item
+          ? (isGov ? "Editar reserva do Governador" : "Editar registro de agenda")
+          : (isGov ? "Nova reserva do Governador" : "Novo registro de agenda");
+        $("#name-label").textContent = isGov ? "Descrição da reserva" : "Participante / compromisso";
+        $("#delete").hidden = !item;
+
+        const values = item
+          ? { ...item, type: typeOf(item) }
+          : { place: DEFAULT_PLACE, status: "Previsto", type: DEFAULT_TYPE };
+        for (const [field, value] of Object.entries({ id: item?.id ?? "", ...values })) {
+          if (form.elements[field] && !form.elements[field].disabled) form.elements[field].value = value ?? "";
+        }
+        dialog.showModal();
+      }
+
+      // O horário de fim precisa ser posterior ao de início
+      function validateTimes() {
+        const { start, end } = form.elements;
+        end.setCustomValidity(end.value && start.value && end.value <= start.value
+          ? "O horário de fim deve ser posterior ao horário de início." : "");
+      }
+
+      function submitForm(event) {
+        event.preventDefault();
+        validateTimes();
+        if (!form.reportValidity()) return;
+
+        const data = Object.fromEntries(new FormData(form));
+        const isGov = form.dataset.kind === "gov";
+        const existing = state.items.find((i) => i.id === data.id);
+        const item = {
+          id: data.id || newId(),
+          kind: form.dataset.kind,
+          date: existing?.date ?? state.date,
+          start: data.start,
+          end: isGov ? "" : data.end,
+          name: data.name.trim(),
+          role: (data.role ?? "").trim(),
+          org: (data.org ?? "").trim(),
+          place: (data.place ?? "").trim(),
+          status: isGov ? "" : data.status,
+          type: isGov ? "" : data.type,
+        };
+
+        state.items = existing ? state.items.map((i) => (i.id === item.id ? item : i)) : [...state.items, item];
+        saveItems();
+        dialog.close();
+        render();
+
+        const hasConflict = !isGov && findConflicts(dayItems("meeting")).has(item.id);
+        toast(hasConflict ? "Salvo, mas o horário conflita com outro compromisso." : existing ? "Registro atualizado." : "Registro adicionado.");
+      }
+
+      function deleteCurrent() {
+        const item = state.items.find((i) => i.id === form.elements.id.value);
+        if (!item || !confirm(`Excluir "${item.name}" da agenda?`)) return;
+        state.items = state.items.filter((i) => i.id !== item.id);
+        saveItems();
+        dialog.close();
+        render();
+        toast("Registro excluído.");
+      }
+
+      /* ===== Ações ===== */
+      function advanceStatus(id) {
+        const item = state.items.find((i) => i.id === id);
+        const step = item && NEXT_STEP[item.status];
+        if (!step) return;
+        item.status = step.to;
+        saveItems();
+        render();
+      }
+
+      function handleItemClick(event) {
+        const button = event.target.closest("[data-action]");
+        if (!button) return;
+        const item = state.items.find((i) => i.id === button.dataset.id);
+        if (!item) return;
+        if (button.dataset.action === "advance") advanceStatus(item.id);
+        if (button.dataset.action === "edit") openForm(item.kind, item);
+      }
+
+      function goToDate(iso) {
+        if (!iso) return;
+        state.date = iso;
+        render();
+      }
+
+      /* ===== Resumo para WhatsApp ===== */
+      function buildSummary() {
+        const meetings = dayItems("meeting");
+        const gov = dayItems("gov");
+        const places = [...new Set(meetings.map((m) => m.place).filter(Boolean))];
+        const singlePlace = places.length === 1;
+
+        const lines = [`*Agenda Sec. ${SECRETARY} - ${formatShortDate(state.date)} (${formatWeekday(state.date)})*`];
+        if (singlePlace) lines.push(`📍 *Local:* ${places[0]}`);
+
+        const blocks = meetings.map((m) => {
+          const detail = [m.role, m.org].filter(Boolean).join(" - ");
+          return [
+            `🕞 *Horário ${formatRange(m)}*`,
+            `🔹 *Participante:* ${m.name}${detail ? ` | ${detail}` : ""}`,
+            ...(singlePlace || !m.place ? [] : [`📍 *Local:* ${m.place}`]),
+          ].join("\n");
+        });
+        lines.push("", blocks.length ? blocks.join("\n\n") : "Nenhum compromisso registrado.");
+
+        if (gov.length) {
+          lines.push("", "‼️ *RESERVAS DE AGENDA COM O GOVERNADOR* ‼️");
+          gov.forEach((g) => lines.push(`*${formatTime(g.start)} | ${g.name.toLocaleUpperCase("pt-BR")}*`));
+        }
+        return lines.join("\n");
+      }
+
+      function toggleSummary() {
+        const panel = $("#wa");
+        panel.hidden = !panel.hidden;
+        $("#whats").setAttribute("aria-expanded", String(!panel.hidden));
+        if (panel.hidden) return;
+        $("#watext").textContent = buildSummary();
+        panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      async function copySummary() {
+        const text = $("#watext").textContent;
+        const button = $("#copy");
+        try {
+          await navigator.clipboard.writeText(text);
+          button.textContent = "Copiado!";
+        } catch {
+          // Alternativa para páginas abertas sem permissão de área de transferência
+          const area = Object.assign(document.createElement("textarea"), { value: text });
+          document.body.append(area);
+          area.select();
+          button.textContent = document.execCommand("copy") ? "Copiado!" : "Selecione e copie manualmente";
+          area.remove();
+        }
+        setTimeout(() => (button.textContent = "Copiar texto"), 2000);
+      }
+
+      /* ===== Inicialização ===== */
+      function init() {
+        $("#filter").innerHTML = ['<option value="all">Todos os status</option>', ...STATUSES.map((s) => `<option>${s}</option>`)].join("");
+        form.elements.status.innerHTML = STATUSES.map((s) => `<option>${s}</option>`).join("");
+        form.elements.type.innerHTML = Object.keys(TYPES).map((t) => `<option>${t}</option>`).join("");
+        $("#legend").addEventListener("click", (e) => {
+          const button = e.target.closest("[data-type]");
+          if (!button) return;
+          state.type = state.type === button.dataset.type ? "all" : button.dataset.type;
+          render();
+        });
+
+        $("#search").addEventListener("input", (e) => { state.query = e.target.value; render(); });
+        $("#filter").addEventListener("change", (e) => { state.status = e.target.value; render(); });
+        $("#new").addEventListener("click", () => openForm("meeting"));
+        $("#new-gov").addEventListener("click", () => openForm("gov"));
+        $("#list").addEventListener("click", handleItemClick);
+        $("#gov").addEventListener("click", handleItemClick);
+
+        $("#prev").addEventListener("click", () => goToDate(shiftDate(state.date, -1)));
+        $("#next").addEventListener("click", () => goToDate(shiftDate(state.date, 1)));
+        $("#today").addEventListener("click", () => goToDate(toISODate(new Date())));
+        $("#date").addEventListener("change", (e) => goToDate(e.target.value));
+
+        $("#whats").addEventListener("click", toggleSummary);
+        $("#copy").addEventListener("click", copySummary);
+
+        form.addEventListener("submit", submitForm);
+        form.elements.start.addEventListener("input", validateTimes);
+        form.elements.end.addEventListener("input", validateTimes);
+        $("#delete").addEventListener("click", deleteCurrent);
+        $("#cancel").addEventListener("click", () => dialog.close());
+        dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); });
+
+        // Atualiza o destaque "Agora" a cada minuto
+        setInterval(() => renderList(dayItems("meeting")), 60000);
+        render();
+      }
+
+      init();
+    </script>
+  </body>
+</html>

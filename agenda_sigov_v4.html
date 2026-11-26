@@ -246,6 +246,24 @@
 #detail-body .detail-actions [data-detail="edit"]{background:#970808;color:white;border-color:#970808;order:2}
 #detail-body .detail-actions [data-detail="advance"]{order:3}
 @media(max-width:480px){#details{width:calc(100% - 24px)}#details .mhead{padding:12px 16px}#detail-body{padding:18px 16px 0}#detail-body h2{font-size:20px}#detail-body dl{gap:14px}#detail-body .detail-actions{margin:0 -16px;padding:12px 16px}}
+
+/* Shared column geometry for every appointment, regardless of available actions. */
+#list{--commit-columns:100px minmax(0,1.8fr) minmax(110px,1fr) 168px 210px}
+#list .row,#list .commit-columns{display:grid;grid-template-columns:var(--commit-columns);gap:16px;align-items:center;padding:14px 16px;border-left-width:4px;box-sizing:border-box}
+#list .commit-columns{border-left:4px solid transparent;border-bottom:1px solid var(--line);background:#fff;color:#64748b;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.045em;padding-top:10px;padding-bottom:10px}
+#list .row{min-height:72px}
+#list .row>div{min-width:0}
+#list .row .place{grid-column:auto;margin:0;font-size:14px;color:#334155;overflow-wrap:anywhere}
+#list .row .state{grid-column:auto;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px}
+#list .row .state .pill{max-width:100%;white-space:normal;text-align:left}
+#list .row .acts{grid-column:auto;display:grid;grid-template-columns:minmax(0,1fr) 36px;gap:8px;align-items:center;justify-content:stretch}
+#list .row .acts [data-action="advance"]{grid-column:1;width:100%;white-space:normal;line-height:1.25;min-height:36px;padding:7px 6px}
+#list .row .acts [data-action="details"]{grid-column:2;width:36px;min-height:36px;padding:0}
+#list .column-actions{text-align:right}
+.executive #list{--commit-columns:100px minmax(0,2fr) minmax(110px,1fr)}
+.executive #list .column-status,.executive #list .column-actions{display:none}
+@media(max-width:1100px){#list{--commit-columns:84px minmax(0,1.5fr) minmax(85px,1fr) 140px 184px}#list .row,#list .commit-columns{gap:10px;padding-left:12px;padding-right:12px}}
+@media(max-width:760px){#list .commit-columns{display:none}#list .row,.executive #list .row{grid-template-columns:76px minmax(0,1fr);gap:8px 12px}#list .row .place{grid-column:2}#list .row .state{grid-column:2;flex-direction:row;flex-wrap:wrap;justify-content:flex-start}#list .row .acts{grid-column:2;grid-template-columns:minmax(0,170px) 36px;justify-content:start}}
 </style>
   </head>
   <body>
@@ -501,7 +519,7 @@
 
         $("#list-count").textContent = filtering ? `${visible.length} de ${meetings.length}` : `${meetings.length} compromissos`;
         $("#list").innerHTML = visible.length
-          ? [true,false].map(b=>{const group=visible.filter(m=>isBirthday(m)===b);return group.length?`<div class="section-label">${b?"Lembretes do dia":"Compromissos"}</div>`+group.map(m=>rowTemplate(m,{conflict:conflicts.has(m.id),current:m.id===currentId})).join(""):"";}).join("")
+          ? [true,false].map(b=>{const group=visible.filter(m=>isBirthday(m)===b);return group.length?`<div class="section-label">${b?"Lembretes do dia":"Compromissos"}</div>`+(b?"":`<div class="commit-columns"><span>Horário</span><span>Compromisso</span><span>Local</span><span class="column-status">Status</span><span class="column-actions">Ações</span></div>`)+group.map(m=>rowTemplate(m,{conflict:conflicts.has(m.id),current:m.id===currentId})).join(""):"";}).join("")
           : `<div class="empty">${filtering ? "Nenhum compromisso encontrado com esses filtros." : 'Nenhum compromisso neste dia. Use "+ Novo registro" para adicionar.'}</div>`;
       }
 
